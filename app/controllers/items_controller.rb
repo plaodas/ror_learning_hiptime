@@ -2,15 +2,19 @@ class ItemsController < ApplicationController
 	before_action :find_item, only:[ :show , :edit, :update, :destroy]
 
 	def index 
-		@items= Item.all.order('created_at desc')
+		if user_signed_in?
+			@items= Item.where(:user_id => current_user.id).order('created_at desc')
+		else
+
+		end
 	end
 
 	def new
-		@item= Item.new()
+		@item=  current_user.items.build
 	end
 
 	def create
-		@item= Item.new(item_params)
+		@item= current_user.items.build(item_params)
 		if @item.save 
 			redirect_to root_path 
 		else
